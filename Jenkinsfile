@@ -11,7 +11,15 @@ pipeline {
 
         stage('Run') {
             steps {
-                bat 'java -cp src\\main\\java Factorial'
+                script {
+                    def output = bat(
+                        script: 'java -cp src\\main\\java Factorial',
+                        returnStdout: true
+                    ).trim()
+
+                    echo output
+                    env.PROGRAM_OUTPUT = output
+                }
             }
         }
     }
@@ -24,7 +32,7 @@ pipeline {
 
 Java Program Output:
 
-${currentBuild.rawBuild.getLog(100)}
+${env.PROGRAM_OUTPUT}
 
 """,
                 to: "2025.adriel.gaddam@ves.ac.in"
