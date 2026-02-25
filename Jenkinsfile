@@ -11,7 +11,15 @@ pipeline {
 
         stage('Run') {
             steps {
-                bat 'java -cp src\\main\\java Factorial'
+                script {
+                    def output = bat(
+                        script: 'java -cp src\\main\\java Factorial',
+                        returnStdout: true
+                    ).trim()
+
+                    echo output
+                    env.PROGRAM_OUTPUT = output
+                }
             }
         }
     }
@@ -20,7 +28,13 @@ pipeline {
         success {
             emailext (
                 subject: "SUCCESS: Build Completed",
-                body: "Your Jenkins pipeline build was successful.",
+                body: """Build Successful!
+
+Java Program Output:
+
+${env.PROGRAM_OUTPUT}
+
+""",
                 to: "2025.adriel.gaddam@ves.ac.in"
             )
         }
